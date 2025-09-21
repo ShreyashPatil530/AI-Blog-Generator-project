@@ -69,20 +69,14 @@ The **AI Blog Generator** is a cutting-edge web application that harnesses OpenA
 
 ### 1. Clone Repository
 ```bash
-git clone <repository-url>
+git clone <[repository-url](https://github.com/ShreyashPatil530/AI-Blog-Generator-project/blob/main/README.md)>
 cd AI_Blog_Generator
 ```
 
 ### 2. Create Virtual Environment
 ```bash
 # Windows
-python -m venv venv
-venv\Scripts\activate
-
-# macOS/Linux  
-python3 -m venv venv
-source venv/bin/activate
-```
+python -version
 
 ### 3. Install Dependencies
 ```bash
@@ -117,9 +111,9 @@ Access the application at: **http://localhost:5000**
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | Your OpenAI API key | Required |
-| `MYSQL_PASSWORD` | MySQL root password | shreyash7710 |
+| `MYSQL_PASSWORD` | MySQL root password | password |
 | `MYSQL_HOST` | Database host | localhost |
-| `MYSQL_PORT` | Database port | 3306 |
+| `MYSQL_PORT` | Database port | 1723 |
 | `MYSQL_USER` | Database username | root |
 | `MYSQL_DATABASE` | Database name | blog_generator |
 | `SECRET_KEY` | Flask secret key | Required |
