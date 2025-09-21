@@ -98,18 +98,6 @@ USE blog_generator;
 -- Table will be created automatically when you run the app
 ```
 
-### 5. Configure Environment
-Create `.env` file in project root:
-```env
-# OpenAI Configuration
-OPENAI_API_KEY=your-openai-api-key-here
-
-# MySQL Configuration
-MYSQL_PASSWORD=shreyash7710
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_DATABASE=blog_generator
 
 # Flask Configuration  
 SECRET_KEY=your-secret-key-here
