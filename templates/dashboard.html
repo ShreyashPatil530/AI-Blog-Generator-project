@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Blog Generator</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-blog me-2"></i>AI Blog Generator
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('index') }}">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+                <a class="nav-link active" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-dashboard me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold text-primary">
+                    <i class="fas fa-dashboard me-3"></i>Blog Dashboard
+                </h1>
+                <p class="lead text-muted">Manage all your AI-generated blog posts</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>Create New Blog
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Total Blogs</h5>
+                                <h2 class="mb-0">{{ blogs|length }}</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-blog fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Recent Posts</h5>
+                                <h2 class="mb-0">{{ blogs[:7]|length }}</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-calendar-week fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">AI Generated</h5>
+                                <h2 class="mb-0">100%</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-robot fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Blogs List -->
+        <div class="row">
+            <div class="col-12">
+                {% if blogs %}
+                    <div class="row" id="blogsContainer">
+                        {% for blog in blogs %}
+                        <div class="col-lg-6 col-xl-4 mb-4" id="blog-{{ blog.id }}">
+                            <div class="card h-100 shadow-sm border-0 blog-card">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title text-primary fw-bold">{{ blog.topic }}</h5>
+                                    <p class="card-text text-muted flex-grow-1">{{ blog.preview }}</p>
+                                    
+                                    <div class="mt-auto">
+                                        <div class="mb-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                {{ blog.created_at }}
+                                            </small>
+                                        </div>
+                                        
+                                        <div class="btn-group w-100" role="group">
+                                            <button type="button" class="btn btn-outline-primary btn-sm" 
+                                                    onclick="viewBlog({{ blog.id }}, '{{ blog.topic|e }}', `{{ blog.content|e }}`)">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm" 
+                                                    onclick="editBlog({{ blog.id }}, '{{ blog.topic|e }}', `{{ blog.content|e }}`)">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                    onclick="deleteBlog({{ blog.id }}, '{{ blog.topic|e }}')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-blog fa-4x text-muted"></i>
+                        </div>
+                        <h3 class="text-muted">No blogs found</h3>
+                        <p class="text-muted mb-4">You haven't created any blogs yet. Start by generating your first AI-powered blog post!</p>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus me-2"></i>Create Your First Blog
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- View Blog Modal -->
+    <div class="modal fade" id="viewBlogModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewBlogTitle">Blog Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="viewBlogContent" class="blog-content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Blog Modal -->
+    <div class="modal fade" id="editBlogModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Blog Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBlogForm">
+                        <input type="hidden" id="editBlogId" name="blog_id">
+                        <div class="mb-3">
+                            <label for="editBlogTopic" class="form-label">Topic</label>
+                            <input type="text" class="form-control" id="editBlogTopic" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBlogContent" class="form-label">Content</label>
+                            <textarea class="form-control" id="editBlogContent" rows="15" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEditedBlog()">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this blog post?</p>
+                    <p><strong id="deleteBlogTitle"></strong></p>
+                    <p class="text-danger">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>Delete Blog
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1055;"></div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard JavaScript -->
+    <script>
+        let currentBlogId = null;
+
+        function viewBlog(id, topic, content) {
+            document.getElementById('viewBlogTitle').textContent = topic;
+            document.getElementById('viewBlogContent').innerHTML = content.replace(/\n/g, '<br>');
+            new bootstrap.Modal(document.getElementById('viewBlogModal')).show();
+        }
+
+        function editBlog(id, topic, content) {
+            document.getElementById('editBlogId').value = id;
+            document.getElementById('editBlogTopic').value = topic;
+            document.getElementById('editBlogContent').value = content;
+            currentBlogId = id;
+            new bootstrap.Modal(document.getElementById('editBlogModal')).show();
+        }
+
+        function saveEditedBlog() {
+            const blogId = document.getElementById('editBlogId').value;
+            const topic = document.getElementById('editBlogTopic').value.trim();
+            const content = document.getElementById('editBlogContent').value.trim();
+
+            if (!topic || !content) {
+                showAlert('Please fill in all fields', 'danger');
+                return;
+            }
+
+            fetch(`/edit/${blogId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    topic: topic,
+                    content: content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editBlogModal')).hide();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showAlert(data.error || 'Failed to update blog', 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Network error occurred', 'danger');
+            });
+        }
+
+        function deleteBlog(id, title) {
+            currentBlogId = id;
+            document.getElementById('deleteBlogTitle').textContent = title;
+            new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (currentBlogId) {
+                fetch(`/delete/${currentBlogId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message, 'success');
+                        document.getElementById(`blog-${currentBlogId}`).remove();
+                        bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+                        
+                        // Check if no blogs remaining
+                        if (document.querySelectorAll('.blog-card').length === 0) {
+                            setTimeout(() => location.reload(), 1000);
+                        }
+                    } else {
+                        showAlert(data.error || 'Failed to delete blog', 'danger');
+                    }
+                })
+                .catch(error => {
+                    showAlert('Network error occurred', 'danger');
+                });
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.getElementById('alertContainer').appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
