@@ -226,16 +226,7 @@ AI_Blog_Generator/
     └── 📄 dashboard.html     # Dashboard
 ```
 
-## 📸 Screenshots
 
-### Homepage - Topic Input
-![Homepage](https://via.placeholder.com/800x400?text=AI+Blog+Generator+Homepage)
-
-### Generated Blog Content
-![Generated Content](https://via.placeholder.com/800x400?text=Generated+Blog+Content+Display)
-
-### Dashboard - Blog Management  
-![Dashboard](https://via.placeholder.com/800x400?text=Blog+Management+Dashboard)
 
 ## 🧪 Testing
 
